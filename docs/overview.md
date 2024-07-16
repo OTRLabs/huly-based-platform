@@ -26,6 +26,16 @@ On top of that, there is a lot of manual work that goes into setting up and mana
 
 TL;DR: I want to build a platform that makes it easy to manage all of the tools and data that a red team needs to do their job, and I want to build it on top of the Huly platform because it is already a great platform that is designed to be extensible.
 
+
+## Ok... but why not start this project from scratch?
+
+This is a valid question because on some level, building out the entire system would likely give me a unique set of skills, and maybe I would make different choices and, and, and… there are a million reasons why I should build this from scratch. But I have a few reasons why I am choosing to build on top of the Huly platform.
+What it comes down to is really a few things.
+I mean for one, my goal is not to build a productivity platform alone.
+But also, I believe that this approach is more likely to give me the experience I am looking for, working within more defined boundaries and working with a codebase that existed long before I was involved.
+
+
+
 ### My thoughts on Huly
 
 **pros**
@@ -46,7 +56,669 @@ TL;DR: I want to build a platform that makes it easy to manage all of the tools 
 ### 1. Modifying the Huly Platform UI
 ### 2. modifying the database
 It is important to me that we make every effort to use the existing Huly Database. This is because I want to make sure that we are not creating a situation where we have to maintain two separate databases. This is a recipe for disaster. So, we will make every effort to use the existing Huly database, and only create new tables when absolutely necessary.
+To modify the database, we will need to make changes to the `platform/models` directory. 
+```bash
+/platform$ tree models 
+models
+├── activity
+│   ├── config
+│   │   └── rig.json
+│   ├── package.json
+│   ├── src
+│   │   ├── actions.ts
+│   │   ├── index.ts
+│   │   ├── migration.ts
+│   │   ├── notification.ts
+│   │   └── plugin.ts
+│   └── tsconfig.json
+├── all
+│   ├── CHANGELOG.json
+│   ├── CHANGELOG.md
+│   ├── config
+│   │   └── rig.json
+│   ├── package.json
+│   ├── src
+│   │   ├── index.ts
+│   │   └── migration.ts
+│   └── tsconfig.json
+├── attachment
+│   ├── config
+│   │   └── rig.json
+│   ├── package.json
+│   ├── src
+│   │   ├── index.ts
+│   │   ├── migration.ts
+│   │   └── plugin.ts
+│   └── tsconfig.json
+├── bitrix
+│   ├── config
+│   │   └── rig.json
+│   ├── package.json
+│   ├── src
+│   │   ├── index.ts
+│   │   ├── migration.ts
+│   │   └── plugin.ts
+│   └── tsconfig.json
+├── board
+│   ├── config
+│   │   └── rig.json
+│   ├── package.json
+│   ├── src
+│   │   ├── index.ts
+│   │   ├── migration.ts
+│   │   └── plugin.ts
+│   └── tsconfig.json
+├── calendar
+│   ├── config
+│   │   └── rig.json
+│   ├── package.json
+│   ├── src
+│   │   ├── index.ts
+│   │   ├── migration.ts
+│   │   └── plugin.ts
+│   └── tsconfig.json
+├── chunter
+│   ├── CHANGELOG.json
+│   ├── CHANGELOG.md
+│   ├── config
+│   │   └── rig.json
+│   ├── package.json
+│   ├── src
+│   │   ├── index.ts
+│   │   ├── migration.ts
+│   │   └── plugin.ts
+│   └── tsconfig.json
+├── contact
+│   ├── CHANGELOG.json
+│   ├── CHANGELOG.md
+│   ├── config
+│   │   └── rig.json
+│   ├── package.json
+│   ├── src
+│   │   ├── index.ts
+│   │   ├── migration.ts
+│   │   └── plugin.ts
+│   └── tsconfig.json
+├── controlled-documents
+│   ├── config
+│   │   └── rig.json
+│   ├── package.json
+│   ├── src
+│   │   ├── index.ts
+│   │   ├── migration.ts
+│   │   ├── permissions.ts
+│   │   ├── plugin.ts
+│   │   ├── roles.ts
+│   │   ├── spaceType.ts
+│   │   └── types.ts
+│   └── tsconfig.json
+├── core
+│   ├── CHANGELOG.json
+│   ├── CHANGELOG.md
+│   ├── config
+│   │   └── rig.json
+│   ├── package.json
+│   ├── src
+│   │   ├── benchmark.ts
+│   │   ├── component.ts
+│   │   ├── core.ts
+│   │   ├── index.ts
+│   │   ├── migration.ts
+│   │   ├── permissions.ts
+│   │   ├── security.ts
+│   │   ├── spaceType.ts
+│   │   ├── status.ts
+│   │   ├── transient.ts
+│   │   └── tx.ts
+│   └── tsconfig.json
+├── document
+│   ├── config
+│   │   └── rig.json
+│   ├── package.json
+│   ├── src
+│   │   ├── index.ts
+│   │   ├── migration.ts
+│   │   └── plugin.ts
+│   └── tsconfig.json
+├── drive
+│   ├── config
+│   │   └── rig.json
+│   ├── package.json
+│   ├── src
+│   │   ├── index.ts
+│   │   ├── migration.ts
+│   │   └── plugin.ts
+│   └── tsconfig.json
+├── gmail
+│   ├── config
+│   │   └── rig.json
+│   ├── package.json
+│   ├── src
+│   │   ├── index.ts
+│   │   ├── migration.ts
+│   │   └── plugin.ts
+│   └── tsconfig.json
+├── guest
+│   ├── config
+│   │   └── rig.json
+│   ├── package.json
+│   ├── src
+│   │   ├── index.ts
+│   │   ├── migration.ts
+│   │   ├── plugin.ts
+│   │   └── utils.ts
+│   └── tsconfig.json
+├── hr
+│   ├── config
+│   │   └── rig.json
+│   ├── package.json
+│   ├── src
+│   │   ├── index.ts
+│   │   ├── migration.ts
+│   │   └── plugin.ts
+│   └── tsconfig.json
+├── inventory
+│   ├── config
+│   │   └── rig.json
+│   ├── package.json
+│   ├── src
+│   │   ├── index.ts
+│   │   ├── migration.ts
+│   │   └── plugin.ts
+│   └── tsconfig.json
+├── lead
+│   ├── config
+│   │   └── rig.json
+│   ├── package.json
+│   ├── src
+│   │   ├── index.ts
+│   │   ├── migration.ts
+│   │   ├── plugin.ts
+│   │   ├── spaceType.ts
+│   │   └── types.ts
+│   └── tsconfig.json
+├── love
+│   ├── config
+│   │   └── rig.json
+│   ├── package.json
+│   ├── src
+│   │   ├── index.ts
+│   │   ├── migration.ts
+│   │   └── plugin.ts
+│   └── tsconfig.json
+├── notification
+│   ├── config
+│   │   └── rig.json
+│   ├── package.json
+│   ├── src
+│   │   ├── index.ts
+│   │   ├── migration.ts
+│   │   └── plugin.ts
+│   └── tsconfig.json
+├── preference
+│   ├── config
+│   │   └── rig.json
+│   ├── package.json
+│   ├── src
+│   │   ├── index.ts
+│   │   └── migration.ts
+│   └── tsconfig.json
+├── presentation
+│   ├── config
+│   │   └── rig.json
+│   ├── package.json
+│   ├── src
+│   │   ├── index.ts
+│   │   └── plugin.ts
+│   └── tsconfig.json
+├── print
+│   ├── config
+│   │   └── rig.json
+│   ├── package.json
+│   ├── src
+│   │   ├── index.ts
+│   │   ├── migration.ts
+│   │   └── plugin.ts
+│   └── tsconfig.json
+├── products
+│   ├── config
+│   │   └── rig.json
+│   ├── package.json
+│   ├── src
+│   │   ├── index.ts
+│   │   ├── migration.ts
+│   │   ├── plugin.ts
+│   │   └── roles.ts
+│   └── tsconfig.json
+├── questions
+│   ├── config
+│   │   └── rig.json
+│   ├── jest.config.js
+│   ├── package.json
+│   ├── src
+│   │   ├── doc-types
+│   │   │   ├── base.ts
+│   │   │   ├── index.ts
+│   │   │   ├── mixin.ts
+│   │   │   └── questions
+│   │   │       ├── MultipleChoice.ts
+│   │   │       ├── Ordering.ts
+│   │   │       └── SingleChoice.ts
+│   │   ├── index.ts
+│   │   ├── migration.ts
+│   │   └── plugin.ts
+│   └── tsconfig.json
+├── recruit
+│   ├── CHANGELOG.json
+│   ├── CHANGELOG.md
+│   ├── config
+│   │   └── rig.json
+│   ├── package.json
+│   ├── src
+│   │   ├── index.ts
+│   │   ├── migration.ts
+│   │   ├── plugin.ts
+│   │   ├── review.ts
+│   │   ├── spaceType.ts
+│   │   └── types.ts
+│   └── tsconfig.json
+├── request
+│   ├── config
+│   │   └── rig.json
+│   ├── package.json
+│   ├── src
+│   │   ├── index.ts
+│   │   └── plugin.ts
+│   └── tsconfig.json
+├── server-activity
+│   ├── config
+│   │   └── rig.json
+│   ├── package.json
+│   ├── src
+│   │   ├── index.ts
+│   │   └── migration.ts
+│   └── tsconfig.json
+├── server-attachment
+│   ├── config
+│   │   └── rig.json
+│   ├── package.json
+│   ├── src
+│   │   └── index.ts
+│   └── tsconfig.json
+├── server-calendar
+│   ├── config
+│   │   └── rig.json
+│   ├── package.json
+│   ├── src
+│   │   └── index.ts
+│   └── tsconfig.json
+├── server-chunter
+│   ├── config
+│   │   └── rig.json
+│   ├── package.json
+│   ├── src
+│   │   └── index.ts
+│   └── tsconfig.json
+├── server-collaboration
+│   ├── config
+│   │   └── rig.json
+│   ├── package.json
+│   ├── src
+│   │   └── index.ts
+│   └── tsconfig.json
+├── server-contact
+│   ├── config
+│   │   └── rig.json
+│   ├── package.json
+│   ├── src
+│   │   └── index.ts
+│   └── tsconfig.json
+├── server-controlled-documents
+│   ├── config
+│   │   └── rig.json
+│   ├── package.json
+│   ├── src
+│   │   └── index.ts
+│   └── tsconfig.json
+├── server-core
+│   ├── CHANGELOG.json
+│   ├── CHANGELOG.md
+│   ├── config
+│   │   └── rig.json
+│   ├── package.json
+│   ├── src
+│   │   └── index.ts
+│   └── tsconfig.json
+├── server-document
+│   ├── config
+│   │   └── rig.json
+│   ├── package.json
+│   ├── src
+│   │   └── index.ts
+│   └── tsconfig.json
+├── server-drive
+│   ├── config
+│   │   └── rig.json
+│   ├── package.json
+│   ├── src
+│   │   └── index.ts
+│   └── tsconfig.json
+├── server-gmail
+│   ├── config
+│   │   └── rig.json
+│   ├── package.json
+│   ├── src
+│   │   └── index.ts
+│   └── tsconfig.json
+├── server-guest
+│   ├── config
+│   │   └── rig.json
+│   ├── package.json
+│   ├── src
+│   │   └── index.ts
+│   └── tsconfig.json
+├── server-hr
+│   ├── config
+│   │   └── rig.json
+│   ├── package.json
+│   ├── src
+│   │   └── index.ts
+│   └── tsconfig.json
+├── server-inventory
+│   ├── config
+│   │   └── rig.json
+│   ├── package.json
+│   ├── src
+│   │   └── index.ts
+│   └── tsconfig.json
+├── server-lead
+│   ├── config
+│   │   └── rig.json
+│   ├── package.json
+│   ├── src
+│   │   └── index.ts
+│   └── tsconfig.json
+├── server-love
+│   ├── config
+│   │   └── rig.json
+│   ├── package.json
+│   ├── src
+│   │   └── index.ts
+│   └── tsconfig.json
+├── server-notification
+│   ├── config
+│   │   └── rig.json
+│   ├── package.json
+│   ├── src
+│   │   └── index.ts
+│   └── tsconfig.json
+├── server-openai
+│   ├── CHANGELOG.json
+│   ├── CHANGELOG.md
+│   ├── config
+│   │   └── rig.json
+│   ├── package.json
+│   ├── src
+│   │   └── index.ts
+│   └── tsconfig.json
+├── server-products
+│   ├── config
+│   │   └── rig.json
+│   ├── package.json
+│   ├── src
+│   │   └── index.ts
+│   └── tsconfig.json
+├── server-recruit
+│   ├── config
+│   │   └── rig.json
+│   ├── package.json
+│   ├── src
+│   │   └── index.ts
+│   └── tsconfig.json
+├── server-request
+│   ├── config
+│   │   └── rig.json
+│   ├── package.json
+│   ├── src
+│   │   └── index.ts
+│   └── tsconfig.json
+├── server-setting
+│   ├── config
+│   │   └── rig.json
+│   ├── package.json
+│   ├── src
+│   │   └── index.ts
+│   └── tsconfig.json
+├── server-tags
+│   ├── config
+│   │   └── rig.json
+│   ├── package.json
+│   ├── src
+│   │   └── index.ts
+│   └── tsconfig.json
+├── server-task
+│   ├── config
+│   │   └── rig.json
+│   ├── package.json
+│   ├── src
+│   │   └── index.ts
+│   └── tsconfig.json
+├── server-telegram
+│   ├── config
+│   │   └── rig.json
+│   ├── package.json
+│   ├── src
+│   │   └── index.ts
+│   └── tsconfig.json
+├── server-templates
+│   ├── config
+│   │   └── rig.json
+│   ├── package.json
+│   ├── src
+│   │   └── index.ts
+│   └── tsconfig.json
+├── server-time
+│   ├── config
+│   │   └── rig.json
+│   ├── package.json
+│   ├── src
+│   │   └── index.ts
+│   └── tsconfig.json
+├── server-tracker
+│   ├── config
+│   │   └── rig.json
+│   ├── package.json
+│   ├── src
+│   │   └── index.ts
+│   └── tsconfig.json
+├── server-training
+│   ├── config
+│   │   └── rig.json
+│   ├── package.json
+│   ├── src
+│   │   └── index.ts
+│   └── tsconfig.json
+├── server-translate
+│   ├── CHANGELOG.json
+│   ├── CHANGELOG.md
+│   ├── config
+│   │   └── rig.json
+│   ├── package.json
+│   ├── src
+│   │   └── index.ts
+│   └── tsconfig.json
+├── server-view
+│   ├── config
+│   │   └── rig.json
+│   ├── package.json
+│   ├── src
+│   │   └── index.ts
+│   └── tsconfig.json
+├── setting
+│   ├── config
+│   │   └── rig.json
+│   ├── package.json
+│   ├── src
+│   │   ├── index.ts
+│   │   ├── migration.ts
+│   │   └── plugin.ts
+│   └── tsconfig.json
+├── support
+│   ├── config
+│   │   └── rig.json
+│   ├── package.json
+│   ├── src
+│   │   └── index.ts
+│   └── tsconfig.json
+├── tags
+│   ├── config
+│   │   └── rig.json
+│   ├── package.json
+│   ├── src
+│   │   ├── index.ts
+│   │   ├── migration.ts
+│   │   └── plugin.ts
+│   └── tsconfig.json
+├── task
+│   ├── CHANGELOG.json
+│   ├── CHANGELOG.md
+│   ├── config
+│   │   └── rig.json
+│   ├── package.json
+│   ├── src
+│   │   ├── index.ts
+│   │   ├── migration.ts
+│   │   └── plugin.ts
+│   └── tsconfig.json
+├── telegram
+│   ├── config
+│   │   └── rig.json
+│   ├── package.json
+│   ├── src
+│   │   ├── index.ts
+│   │   ├── migration.ts
+│   │   └── plugin.ts
+│   └── tsconfig.json
+├── templates
+│   ├── config
+│   │   └── rig.json
+│   ├── package.json
+│   ├── src
+│   │   ├── index.ts
+│   │   ├── migration.ts
+│   │   └── plugin.ts
+│   └── tsconfig.json
+├── text-editor
+│   ├── config
+│   │   └── rig.json
+│   ├── package.json
+│   ├── src
+│   │   ├── index.ts
+│   │   ├── migration.ts
+│   │   └── plugin.ts
+│   └── tsconfig.json
+├── time
+│   ├── config
+│   │   └── rig.json
+│   ├── package.json
+│   ├── src
+│   │   ├── index.ts
+│   │   ├── migration.ts
+│   │   └── plugin.ts
+│   └── tsconfig.json
+├── tracker
+│   ├── config
+│   │   └── rig.json
+│   ├── package.json
+│   ├── src
+│   │   ├── actions.ts
+│   │   ├── index.ts
+│   │   ├── migration.ts
+│   │   ├── plugin.ts
+│   │   ├── presenters.ts
+│   │   ├── types.ts
+│   │   └── viewlets.ts
+│   └── tsconfig.json
+├── training
+│   ├── config
+│   │   └── rig.json
+│   ├── jest.config.js
+│   ├── package.json
+│   ├── src
+│   │   ├── index.ts
+│   │   ├── migration.ts
+│   │   ├── plugin.ts
+│   │   ├── roles.ts
+│   │   └── types.ts
+│   └── tsconfig.json
+├── view
+│   ├── CHANGELOG.json
+│   ├── CHANGELOG.md
+│   ├── config
+│   │   └── rig.json
+│   ├── package.json
+│   ├── src
+│   │   ├── index.ts
+│   │   ├── migration.ts
+│   │   ├── plugin.ts
+│   │   └── utils.ts
+│   └── tsconfig.json
+└── workbench
+    ├── CHANGELOG.json
+    ├── CHANGELOG.md
+    ├── config
+    │   └── rig.json
+    ├── package.json
+    ├── src
+    │   ├── index.ts
+    │   └── plugin.ts
+    └── tsconfig.json
 
+209 directories, 404 files
+```
+
+This is where the database models are defined. We will need to create new models for the new tables we want to create, and we will need to modify the existing models to add new fields when necessary.
+It is important to me that when it comes to the database, entities are declared once, and referenced where needed using relationships. This way, a task on the to do list is equivalent to the task on, say an AI agents task queue. The display via the UI may be different. There may be fields we add to the database that we do not necessarily put on the web UI
+
+Once you add a new model to the directory, you will need to add it to the `platform/models/all`
+```bash
+user@cracked:~/platform-1/platform$ tree models/all
+models/all
+├── CHANGELOG.json
+├── CHANGELOG.md
+├── config
+│   └── rig.json
+├── package.json
+├── src
+│   ├── index.ts
+│   └── migration.ts
+└── tsconfig.json
+
+2 directories, 7 files
+```
+
+
+
+### Networking Practices
+
+Generally speaking, we do not want to expose our operations to the internet at large.
+That is why it is heavily advised that you do not expose your dashboard UI to the internet, whether it be with a tunnel like Cloudflared, or port forwarding or something. Generally speaking the assumption is that you want to obfuscate the fact that you are using this offensive Huly platform, on top of the fact that it’s just best practices not to expose services unnecessarily 
+
+That being said:
+- we still have to access the UI somehow
+- Our network scanning systems still have to be able to reach said network to scan
+- Our AI/ML systems still have to be able to reach the internet to download models, and preform searches.
+- Basically, we need to be exposed sometimes, but we want to do it "right"
+
+#### UI Access
+I have a few ideas on how to access the UI:
+- HeadScale / Tailscale: This is a VPN service that is designed to be easy to use and set up. It is designed to be self hosted
+- Tor Hidden Service: Need to do more research, and testing to see how well this works. This is less than ideal, so will be optional at most
+
+#### Network Scanning
+- OpenVPN Profiles + Chained Connections: This is a method of chaining VPN connections together to make it harder to trace back to the source. This is a bit more advanced, and will require some testing to see how well it works
+- Torsocks + Proxychains: This is a method of chaining connections together using the Tor network. This would work by passing proxychains configs to the network scanning container, and then using torsocks to route the traffic through the tor network, then out of an "exit proxy" so that you do not have a low rating.
+- Rotating API Keys: This is a method of rotating API keys to avoid rate limiting. This is done by providing multiple of the same type of credential to the network scanning container, and then rotating through them as needed.
 
 ## Goals:
 
@@ -101,3 +773,6 @@ The network discovery service will be responsible for:
 
 
 ### Centralized Knowledge Base
+
+
+
